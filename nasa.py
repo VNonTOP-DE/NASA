@@ -1,3 +1,4 @@
+import json
 import requests
 import os
 from colorama import Fore, Style, init
@@ -34,8 +35,16 @@ client = OpenAI(api_key="sk-2b6025fa93fa431697334b0d9422a502", base_url="https:/
 
 # DeepSeek AI Request for Fortune-Telling Story
 def generate_fortune_story(description):
-    prompt = (f"Turn this space event description into a human curiosity-driven story, predicting fate and emotions: "
-              f"'{description}'. Make it sound mystical, rare, and full of wonder.")
+    prompt = (f"Craft a mystical, poetic birthday analysis inspired by the celestial imagery of the Perseid meteor shower. "
+              f"Use the following elements from this description as symbolic guides: '{description}'\n\n"
+              f"Structure the analysis with:\n"
+              f"- A mystical title and core theme\n"
+              f"- Opening paragraph with vivid cosmic metaphors\n" 
+              f"- 3-4 major opportunities as bullet points\n"
+              f"- Celestial cycles section linking to life areas\n"
+              f"- Star ratings for Personal Growth, Wealth, Health, Love, Family\n"
+              f"- Closing with actionable cosmic wisdom\n\n"
+              f"Make it enchanting yet empowering, blending cosmic wonder with grounded guidance.")
 
     try:
         response = client.chat.completions.create(
@@ -73,6 +82,8 @@ def download_image(image_url, date):
     else:
         print(Fore.RED + "❌ Failed to download image.")
 
+
+
 # Main CLI Function
 def main():
     print(Fore.CYAN + "🔭 Welcome to the NASA APOD Fortune Teller 🔭")
@@ -99,6 +110,29 @@ def main():
         print("\n🔮 " + Fore.LIGHTMAGENTA_EX + Style.BRIGHT + "Your Space-Inspired Fortune 🔮")
         fortune_story = generate_fortune_story(apod_data["explanation"])
         print(Fore.LIGHTCYAN_EX + fortune_story if fortune_story else "✨ The universe is silent today, but the stars still shine for you. ✨")
+
+        # Save results to JSON
+        result = {
+            "date": apod_data['date'],
+            "title": apod_data['title'],
+            "image_url": apod_data.get('hdurl', apod_data.get('url', 'No image')),
+            "fortune_story": fortune_story
+        }
+
+        save_results_to_json(result)
+
+def save_results_to_json(result):
+    file_path = "nasa_apod_results.json"
+    if os.path.exists(file_path):
+        with open(file_path, "r") as file:
+            data = json.load(file)
+    else:
+        data = []
+
+    data.append(result)
+
+    with open(file_path, "w") as file:
+        json.dump(data, file, indent=4)
 
 if __name__ == "__main__":
     main()
