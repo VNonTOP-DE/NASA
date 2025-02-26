@@ -27,7 +27,7 @@ streamlit run app.py
 
 ## Deployment 🌍
 This app is deployed on **Streamlit Cloud**. Click below to try it out:
-🔗 [Live Demo](https://your-streamlit-app-link)
+🔗 [Live Demo](https://razbtxyqtvzbpurtzcsuce.streamlit.app/)
 
 ## Environment Variables 🔑
 Ensure you have the following API keys set up:
